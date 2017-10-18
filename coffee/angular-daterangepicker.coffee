@@ -65,6 +65,7 @@ picker.directive 'dateRangePicker', ($compile, $timeout, $parse, dateRangePicker
     # Formatter should return just the string value of the input
     # It is used for comparison of if we should re-render
     modelCtrl.$formatters.push (objValue) ->
+      o = opts.locale.output
       f = (date) ->
         if not moment.isMoment(date)
         then moment(date).format(opts.locale.format)
@@ -73,7 +74,7 @@ picker.directive 'dateRangePicker', ($compile, $timeout, $parse, dateRangePicker
       if opts.singleDatePicker and objValue
         f(objValue)
       else if objValue and objValue.startDate
-        [f(objValue.startDate), f(objValue.endDate)].join(opts.locale.separator)
+        opts.rangeLabel + ' (' + [f(objValue.startDate), f(objValue.endDate)].join(opts.locale.separator) + ')'
       else ''
 
     # Render should update the date picker start/end dates as necessary
@@ -113,9 +114,9 @@ picker.directive 'dateRangePicker', ($compile, $timeout, $parse, dateRangePicker
     _init = ->
       # disable autoUpdateInput, can't handle empty values without it.  Our callback here will
       # update our $viewValue, which triggers the $parsers
-      el.daterangepicker angular.extend(opts, {autoUpdateInput: false}), (start, end) ->
+      el.daterangepicker angular.extend(opts, {autoUpdateInput: false}), (start, end, label) ->
         $scope.$apply () ->
-          $scope.model = if opts.singleDatePicker then start else {startDate: start, endDate: end}
+          $scope.model = if opts.singleDatePicker then start else {startDate: start, endDate: end, rangeLabel: label}
 
       # Needs to be after daterangerpicker has been created, otherwise
       # watchers that reinit will be attached to old daterangepicker instance.
