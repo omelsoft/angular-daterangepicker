@@ -92,7 +92,8 @@ $scope.options = {
 	//format: "D-MMMM-YY", //will give you 6-January-17
         toLabel: "To",
         cancelLabel: 'Cancel',
-        customRangeLabel: 'Custom range'
+        customRangeLabel: 'Custom range',
+        output: 'dates', // accepts 'dates', 'label', or 'both'
       },
       ranges: {
         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
@@ -100,6 +101,14 @@ $scope.options = {
       }
     }
 ```
+
+The output property of the locale attribute allows you to set the type of output you want to be displayed in the input field. If it's not set, it will just display the default format.
+
+`dates`: Will display the default options, 'YYYY-MM-DD - YYYY-MM-DD'
+
+`label`: Will display the pre-defined labels like 'Last 7 Days or Last 30 Days'
+
+`both`: Will display 'Last 7 Days (YYYY-MM-DD - YYYY-MM-DD)'
 
 Optionally, event handlers can be passed in through the `eventHandlers` attribute of `options`.
 
