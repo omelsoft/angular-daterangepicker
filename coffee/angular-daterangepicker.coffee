@@ -73,7 +73,11 @@ picker.directive 'dateRangePicker', ($compile, $timeout, $parse, dateRangePicker
 
       if opts.singleDatePicker and objValue
         f(objValue)
-      else if objValue and objValue.startDate
+      else if objValue and objValue.startDate and (angular.isUndefined(o) or (o == 'dates'))
+        [f(objValue.startDate), f(objValue.endDate)].join(opts.locale.separator)
+      else if objValue.startDate and o == 'label'
+        objValue.rangeLabel
+      else if objValue.startDate and o == 'both'
         opts.rangeLabel + ' (' + [f(objValue.startDate), f(objValue.endDate)].join(opts.locale.separator) + ')'
       else ''
 

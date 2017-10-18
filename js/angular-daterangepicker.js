@@ -37,7 +37,7 @@
         };
         el = $(element);
         customOpts = $scope.opts;
-        opts = _mergeOpts({}, dateRangePickerConfig, customOpts);
+        opts = _mergeOpts({}, angular.copy(dateRangePickerConfig), customOpts);
         _picker = null;
         _clear = function() {
           _picker.setStartDate();
@@ -80,7 +80,8 @@
           return max.isAfter(end) || max.isSame(end, 'day');
         });
         modelCtrl.$formatters.push(function(objValue) {
-          var f;
+          var f, o;
+          o = opts.locale.output;
           f = function(date) {
             if (!moment.isMoment(date)) {
               return moment(date).format(opts.locale.format);
@@ -90,8 +91,12 @@
           };
           if (opts.singleDatePicker && objValue) {
             return f(objValue);
-          } else if (objValue.startDate) {
+          } else if (objValue && objValue.startDate && (angular.isUndefined(o) || (o === 'dates'))) {
             return [f(objValue.startDate), f(objValue.endDate)].join(opts.locale.separator);
+          } else if (objValue.startDate && o === 'label') {
+            return objValue.rangeLabel;
+          } else if (objValue.startDate && o === 'both') {
+            return opts.rangeLabel + ' (' + [f(objValue.startDate), f(objValue.endDate)].join(opts.locale.separator) + ')';
           } else {
             return '';
           }
@@ -132,11 +137,12 @@
           var eventType, results;
           el.daterangepicker(angular.extend(opts, {
             autoUpdateInput: false
-          }), function(start, end) {
+          }), function(start, end, label) {
             return $scope.$apply(function() {
               return $scope.model = opts.singleDatePicker ? start : {
                 startDate: start,
-                endDate: end
+                endDate: end,
+                rangeLabel: label
               };
             });
           });
